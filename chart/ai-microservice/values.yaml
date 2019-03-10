@@ -56,12 +56,12 @@ envOfConfigmaps:
   envASSISTANTID:
     name: ASSISTANTID
     configMapKeyRef:
-      name: env-database
+      name: aimicroservice
       key: ASSISTANTID
   envAPIKEY:
     name: APIKEY
     configMapKeyRef:
-      name: env-database
+      name: aimicroservice
       key: APIKEY
 
 service:
