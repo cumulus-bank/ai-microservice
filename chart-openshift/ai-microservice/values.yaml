@@ -84,7 +84,7 @@ imagestream:
   label: aisvc
 
 buildconfig:
-  uri: "https://github.com/cumulus-bank/Accounts-Microservice.git"
+  uri: "https://github.com/cumulus-bank/ai-microservice.git"
   branch: "master"
   name: "aisvc"
   imagename: "aisvc:latest"

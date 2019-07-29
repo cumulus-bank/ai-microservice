@@ -1,0 +1,227 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: ai-microservice
+objects:
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 2
+    labels:
+      app: aisvc
+    name: aisvc
+  spec:
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      app: aisvc
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: aisvc
+        name: aisvc
+      spec:
+        containers:
+        - env:
+          - name: APIKEY
+            valueFrom:
+              configMapKeyRef:
+                key: APIKEY
+                name: aimicroservice
+          - name: ASSISTANTID
+            valueFrom:
+              configMapKeyRef:
+                key: ASSISTANTID
+                name: aimicroservice
+          image: docker-registry.default.svc:5000/kubeapp/aisvc@sha256:b057ea63ad6fcd4587abc82396b5b20351394c1f6bf36b38c421735fcb6c87d7
+          imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                - /bin/bash -c sleep 20
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 3011
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 300
+            successThreshold: 1
+            timeoutSeconds: 2
+          name: aisvc
+          ports:
+          - containerPort: 3011
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 3011
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 300
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 100m
+              memory: 400Mi
+            requests:
+              cpu: 50m
+              memory: 300Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - aisvc
+        from:
+          kind: ImageStreamTag
+          name: aisvc:latest
+          namespace: kubeapp
+        lastTriggeredImage: docker-registry.default.svc:5000/kubeapp/aisvc@sha256:b057ea63ad6fcd4587abc82396b5b20351394c1f6bf36b38c421735fcb6c87d7
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: aisvc
+    name: aisvc
+  spec:
+    ports:
+    - name: aisvc
+      port: 3011
+      protocol: TCP
+      targetPort: 3011
+    selector:
+      app: aisvc
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  data:
+    APIKEY: 8tLSMIYpac8MyNu0SWGw6NZaavQ9EUdNydXAD4_XHkW9
+    ASSISTANTID: cca28742-cfcb-47d3-acce-0992c8185d44
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: aisvc
+    name: aimicroservice
+- apiVersion: autoscaling/v1
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      autoscaling.alpha.kubernetes.io/conditions: '[{"type":"AbleToScale","status":"False","lastTransitionTime":"2019-07-29T15:41:24Z","reason":"FailedGetScale","message":"the
+        HPA controller was unable to get the target''s current scale: deployments/scale.extensions
+        \"aisvc\" not found"}]'
+    creationTimestamp: null
+    labels:
+      app: aisvc
+    name: aisvcmicroservicehpa
+  spec:
+    maxReplicas: 10
+    minReplicas: 2
+    scaleTargetRef:
+      apiVersion: extensions/v1beta1
+      kind: Deployment
+      name: aisvc
+    targetCPUUtilizationPercentage: 70
+  status:
+    currentReplicas: 0
+    desiredReplicas: 0
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: aisvc
+    name: aisvc
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: aisvc:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        ref: master
+        uri: https://github.com/cumulus-bank/Accounts-Microservice.git
+      type: Git
+    strategy:
+      dockerStrategy: {}
+      type: Docker
+    successfulBuildsHistoryLimit: 5
+    triggers:
+    - type: ConfigChange
+    - generic:
+        secret: secret567
+      type: Generic
+    - github:
+        secret: secret567
+      type: GitHub
+  status:
+    lastVersion: 0
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      description: Keeps track of changes in the application image
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: aisvc
+    name: aisvc
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/kubeapp/aisvc:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
