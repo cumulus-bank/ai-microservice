@@ -1,0 +1,32 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: {{ .Values.buildconfig.name }}
+  labels:
+    app: {{ .Values.buildconfig.name }}
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: {{ .Values.buildconfig.imagename }}
+  runPolicy: Serial
+  source:
+    git:
+      ref: {{ .Values.buildconfig.branch }}
+      uri: {{ .Values.buildconfig.uri }}
+    type: Git
+  strategy:
+    dockerStrategy:
+    type: Docker
+  triggers:
+    - imageChange:
+      type: ImageChange
+    - type: ConfigChange
+    - generic:
+        secret: {{ .Values.buildconfig.secret1 }}
+      type: Generic
+    - github:
+        secret: {{ .Values.buildconfig.secret2 }}
+      type: GitHub
