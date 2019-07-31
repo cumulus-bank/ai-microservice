@@ -90,3 +90,9 @@ buildconfig:
   imagename: "aisvc:latest"
   secret1: "secret567"
   secret2: "secret567"
+
+routes:
+  host: "aisvc-kubeapp.apps.9.30.210.207.nip.io"
+  targetPort: 3011
+  name: aisvc
+  weight: 100

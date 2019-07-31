@@ -1,0 +1,19 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
+    openshift.io/host.generated: 'true'
+  labels:
+    app: {{ .Values.routes.name }}
+  name: {{ .Values.routes.name }}
+  namespace: kubeapp
+spec:
+  host: {{ .Values.routes.host }}
+  port:
+    targetPort: {{ .Values.routes.targetPort }}
+  to:
+    kind: Service
+    name: {{ .Values.routes.name }}
+    weight: {{ .Values.routes.weight }}
+  wildcardPolicy: None
