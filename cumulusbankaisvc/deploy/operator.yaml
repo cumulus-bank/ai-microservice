@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cumulusbankaisvc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cumulusbankaisvc
+  template:
+    metadata:
+      labels:
+        name: cumulusbankaisvc
+    spec:
+      serviceAccountName: cumulusbankaisvc
+      containers:
+        - name: cumulusbankaisvc
+          # Replace this with the built image name
+          image: REPLACE_IMAGE
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "cumulusbankaisvc"

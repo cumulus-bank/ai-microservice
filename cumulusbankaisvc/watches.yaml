@@ -1,0 +1,5 @@
+---
+- version: v1alpha1
+  group: cumulusbank.com
+  kind: CumulusBankAiSvc
+  chart: /opt/helm/helm-charts/cumulusbankaisvc
