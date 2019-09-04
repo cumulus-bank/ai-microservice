@@ -29,6 +29,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "true"
         traffic.sidecar.istio.io/excludeOutboundIPRanges: 0.0.0.0/0
+        status.sidecar.istio.io/port: "0"
       name: {{ .Values.metadata.name }} 
       labels:
         app: {{ .Values.metadata.label }} 
@@ -36,22 +37,22 @@ spec:
       containers:
         - name: {{ .Values.image.name }} 
           image: {{ .Values.image.imageName }} 
-          readinessProbe:
-            httpGet: 
-              path: {{ .Values.readinessProbe.path }} 
-              port: {{ .Values.readinessProbe.port }} 
-              scheme: HTTP
-            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }} 
-            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }} 
-            periodSeconds: {{ .Values.readinessProbe.periodSeconds }} 
-          livenessProbe:
-            httpGet:
-              path: {{ .Values.livenessProbe.path }} 
-              port: {{ .Values.livenessProbe.port }} 
-              scheme: HTTP
-            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }} 
-            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }} 
-            periodSeconds: {{ .Values.livenessProbe.periodSeconds }} 
+          # readinessProbe:
+          #   httpGet: 
+          #     path: {{ .Values.readinessProbe.path }} 
+          #     port: {{ .Values.readinessProbe.port }} 
+          #     scheme: HTTP
+          #   initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }} 
+          #   timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }} 
+          #   periodSeconds: {{ .Values.readinessProbe.periodSeconds }} 
+          # livenessProbe:
+          #   httpGet:
+          #     path: {{ .Values.livenessProbe.path }} 
+          #     port: {{ .Values.livenessProbe.port }} 
+          #     scheme: HTTP
+          #   initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }} 
+          #   timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }} 
+          #   periodSeconds: {{ .Values.livenessProbe.periodSeconds }} 
           imagePullPolicy: {{ .Values.image.imagePullPolicy }} 
           lifecycle:
             preStop:
