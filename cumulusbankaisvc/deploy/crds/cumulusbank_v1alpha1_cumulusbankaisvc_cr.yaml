@@ -4,7 +4,7 @@ metadata:
   name: aisvc
 spec:
   replicaCount: 2
-  namespace: "hipster-shop"
+  namespace: "cumulusbank"
   watsonconv: 
     apikey: "8tLSMIYpac8MyNu0SWGw6NZaavQ9EUdNydXAD4_XHkW9"
     assistantid: "cca28742-cfcb-47d3-acce-0992c8185d44"
