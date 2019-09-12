@@ -1,0 +1,318 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  namespace: default
+  name: cumulusbank
+  labels:
+    name: cumulusbank
+    app: cumulusbank
+spec:
+  componentKinds:
+    - group: mcm.ibm.com/v1alpha1
+      kind: PlacementPolicy
+    - group: core
+      kind: Service
+    - group: apps
+      kind: Deployment
+    - group: core
+      kind: Pods
+  descriptor: {}
+  selector:
+    matchLabels:
+      app: cumulusbank
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: aisvc
+  namespace: default
+  labels:
+    name: aisvc
+    app: cumulusbank
+    serviceKind: ApplicationService
+spec:
+  deployer:
+    kind: helm
+    helm:
+      chartURL: https://raw.githubusercontent.com/cumulus-bank/ai-microservice/master/chart/ai-microservice-0.1.0.tgz
+      namespace: default
+      version: 0.1.0
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: smssvc
+  namespace: default
+  labels:
+    name: smssvc
+    app: cumulusbank
+    serviceKind: ApplicationService
+spec:
+  deployer:
+    kind: helm
+    helm:
+      chartURL: https://raw.githubusercontent.com/cumulus-bank/SMS-Microservice/master/chart/smsMicroservice-0.1.0.tgz
+      namespace: default
+      version: 0.1.0
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: odmbanksvc
+  namespace: default
+  labels:
+    name: odmbanksvc
+    app: cumulusbank
+    serviceKind: ApplicationService
+spec:
+  deployer:
+    kind: helm
+    helm:
+      chartURL: https://raw.githubusercontent.com/cumulus-bank/ODM-Microservice/master/chart/odm-microservice-0.1.0.tgz
+      namespace: default
+      version: 0.1.0
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: accountsvc
+  namespace: default
+  labels:
+    name: accountsvc
+    app: cumulusbank
+    serviceKind: ApplicationService
+spec:
+  deployer:
+    kind: helm
+    helm:
+      chartURL: https://raw.githubusercontent.com/cumulus-bank/Accounts-Microservice/master/chart/accountsMicroservice-0.1.0.tgz
+      namespace: default
+      version: 0.1.0
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: aisvc
+  labels:
+    name: cumulusbank
+    app: cumulusbank
+  namespace: default
+spec:
+  clusterLabels:
+    matchLabels:
+      cloud: IBM
+      datacenter: france
+      environment: TslLabs
+      name: local-cluster
+      owner: labs
+      region: France
+      vendor: ICP
+  clusterReplicas: 1
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: smssvc
+  labels:
+    name: cumulusbank
+    app: cumulusbank
+  namespace: default
+spec:
+  clusterLabels:
+    matchLabels:
+      cloud: IBM
+      datacenter: france
+      environment: TslLabs
+      name: local-cluster
+      owner: labs
+      region: France
+      vendor: ICP
+  clusterReplicas: 1
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: odmbanksvc
+  labels:
+    name: cumulusbank
+    app: cumulusbank
+  namespace: default
+spec:
+  clusterLabels:
+    matchLabels:
+      cloud: IBM
+      datacenter: france
+      environment: TslLabs
+      name: local-cluster
+      owner: labs
+      region: France
+      vendor: ICP
+  clusterReplicas: 1
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: accountsvc
+  labels:
+    name: cumulusbank
+    app: cumulusbank
+  namespace: default
+spec:
+  clusterLabels:
+    matchLabels:
+      cloud: IBM
+      datacenter: france
+      environment: TslLabs
+      name: local-cluster
+      owner: labs
+      region: France
+      vendor: ICP
+  clusterReplicas: 1
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: aisvc-apprelation
+  labels:
+    app: cumulusbank
+    destinationKind: Deployable
+    destinationName: aisvc
+    sourceKind: Application
+    sourceName: cumulusbank
+  namespace: default
+spec:
+  destination:
+    name: aisvc
+    kind: Deployable
+  source:
+    name: cumulusbank
+    kind: Application
+  type: contains
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: odmbanksvc-apprelation
+  labels:
+    app: cumulusbank
+    destinationKind: Deployable
+    destinationName: odmbanksvc
+    sourceKind: Application
+    sourceName: cumulusbank
+  namespace: default
+spec:
+  destination:
+    name: odmbanksvc
+    kind: Deployable
+  source:
+    name: cumulusbank
+    kind: Application
+  type: contains
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: accountsvc-apprelation
+  labels:
+    app: cumulusbank
+    destinationKind: Deployable
+    destinationName: accountsvc
+    sourceKind: Application
+    sourceName: cumulusbank
+  namespace: default
+spec:
+  destination:
+    name: accountsvc
+    kind: Deployable
+  source:
+    name: cumulusbank
+    kind: Application
+  type: contains
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: smssvc-apprelation
+  labels:
+    app: cumulusbank
+    destinationKind: Deployable
+    destinationName: smssvc
+    sourceKind: Application
+    sourceName: cumulusbank
+  namespace: default
+spec:
+  destination:
+    name: smssvc
+    kind: Deployable
+  source:
+    name: cumulusbank
+    kind: Application
+  type: contains
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  name: aisvc-placementbinding
+  labels:
+    app: cumulusbank
+    name: cumulusbank
+    placementPolicy: cumulusbank
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: aisvc
+subjects:
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: aisvc
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  name: smssvc-placementbinding
+  labels:
+    app: cumulusbank
+    name: cumulusbank
+    placementPolicy: cumulusbank
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: smssvc
+subjects:
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: smssvc
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  name: odmbanksvc-placementbinding
+  labels:
+    app: cumulusbank
+    name: cumulusbank
+    placementPolicy: cumulusbank
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: odmbanksvc
+subjects:
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: odmbanksvc
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  name: accountsvc-placementbinding
+  labels:
+    app: cumulusbank
+    name: cumulusbank
+    placementPolicy: cumulusbank
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: accountsvc
+subjects:
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: accountsvc
