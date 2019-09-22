@@ -1,5 +1,5 @@
 replicaCount: 2
-
+namespace: "cumulusbank"
 metadata:
  name: aisvc 
  label: aisvc
