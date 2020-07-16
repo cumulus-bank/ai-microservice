@@ -43,7 +43,7 @@
     "gulp-typescript": "^3.2.4",
     "http": "0.0.0",
     "jsonwebtoken": "^8.2.2",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.19",
     "morgan": "^1.7.0",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
