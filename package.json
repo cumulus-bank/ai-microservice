@@ -39,7 +39,7 @@
     "debug": "^2.6.9",
     "dotenv": "^5.0.1",
     "epimetheus": "^1.0.92",
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "gulp-typescript": "^3.2.4",
     "http": "0.0.0",
     "jsonwebtoken": "^8.2.2",
